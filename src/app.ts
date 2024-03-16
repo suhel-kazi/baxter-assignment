@@ -12,7 +12,7 @@ interface User {
     hobbies: string[];
 };
 
-const users: Record<string, User> = {};
+const USERS: Record<string, User> = {};
 
 app.get("/", (req, res) => {
     return res.json({
@@ -23,14 +23,30 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/users", (req, res) => {
-    console.log(users);
-    if (!users || !Object.keys(users).length) {
+    if (!USERS || !Object.keys(USERS).length) {
         return res.status(404)
             .json({
-                message: 'No user present as of now'
+                message: "No user present as of now"
             });
     };
-    return res.json(Object.values(users));
+    return res.json(Object.values(USERS));
+});
+
+app.get("/api/users/:userId", (req, res) => {
+    const { userId } = req.params;
+    console.log(USERS, userId)
+    const user = USERS[userId];
+    if (!user) {
+        return res.status(404)
+            .json({
+                message: "User not found"
+            });
+    };
+    return res.status(200)
+        .json({
+            message: "User found successfully",
+            data: user
+        });
 });
 
 app.post("/api/users", (req, res) => {
@@ -38,13 +54,13 @@ app.post("/api/users", (req, res) => {
     if (!userName || !age || !hobbies) {
         return res.status(400)
             .json({
-                message: 'Missing required user properties: userName, age, hobbies'
+                message: "Missing required user properties: userName, age, hobbies"
             });
     };
 
     const id = uuidv4();
     const newUser: User = { id, userName, age, hobbies};
-    users[id] = newUser;
+    USERS[id] = newUser;
     return res.status(200)
         .json({
             message: "User added successfully",
