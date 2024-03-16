@@ -5,6 +5,15 @@ import dotenv from "dotenv";
 const app = express();
 app.use(express.json());
 
+interface User {
+    id: string;
+    username: string;
+    age: number;
+    hobbies: string[];
+};
+
+const users: Record<string, User> = {};
+
 app.get("/", (req, res) => {
     return res.json({
         title: "Baxter Node.js Assignment",
@@ -14,7 +23,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/users", (req, res) => {
-    return res.json();
+    console.log(users);
+    if (!users || !Object.keys(users).length) {
+        return res.status(404).json({ message: 'No user present as of now' });
+    };
+    return res.json(Object.values(users));
 });
 
 const PORT = process.env.PORT || 3000;
