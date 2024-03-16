@@ -7,7 +7,7 @@ app.use(express.json());
 
 interface User {
     id: string;
-    username: string;
+    userName: string;
     age: number;
     hobbies: string[];
 };
@@ -25,9 +25,31 @@ app.get("/", (req, res) => {
 app.get("/api/users", (req, res) => {
     console.log(users);
     if (!users || !Object.keys(users).length) {
-        return res.status(404).json({ message: 'No user present as of now' });
+        return res.status(404)
+            .json({
+                message: 'No user present as of now'
+            });
     };
     return res.json(Object.values(users));
+});
+
+app.post("/api/users", (req, res) => {
+    const { userName, age, hobbies } = req.body;
+    if (!userName || !age || !hobbies) {
+        return res.status(400)
+            .json({
+                message: 'Missing required user properties: userName, age, hobbies'
+            });
+    };
+
+    const id = uuidv4();
+    const newUser: User = { id, userName, age, hobbies};
+    users[id] = newUser;
+    return res.status(200)
+        .json({
+            message: "User added successfully",
+            data: newUser
+        });
 });
 
 const PORT = process.env.PORT || 3000;
