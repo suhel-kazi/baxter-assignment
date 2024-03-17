@@ -68,6 +68,25 @@ app.post("/api/users", (req, res) => {
         });
 });
 
+app.put("/api/users/:userId", (req, res) => {
+    const { userName, age, hobbies } = req.body;
+    const userId = req.params.userId;
+    const user = USERS[userId];
+    if(!user) {
+        return res.status(404)
+            .json({
+                message: "User not found"
+            });
+    };
+    USERS[userId] = { ...user, userName, age, hobbies };
+    const updatedUser = USERS[userId];
+    return res.status(200)
+        .json({
+            message: "User updated successfully",
+            data: updatedUser
+        });
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
