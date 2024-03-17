@@ -87,6 +87,19 @@ app.put("/api/users/:userId", (req, res) => {
         });
 });
 
+app.delete("/api/users/:userId", (req, res) => {
+    const { userId } = req.params;
+    const user = USERS[userId];
+    if(!user) {
+        return res.status(404)
+            .json({
+                message: "User not found"
+            });
+    };
+    delete USERS[userId];
+    return res.status(204).send();
+});
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
